@@ -1,27 +1,23 @@
 
 import requests, json
 
-import time
-
-url = 'http://127.0.0.1/message'
- 
-while True:
-    str = input()
-    data = str 
-    r = requests.post(url, data=json.dumps(data))
-    time.sleep(1)
-
-
-def connect():
+def send_message():
     """ TODO """
-    return False
+    pass
 
-
-def is_connected():
+def add_user():
     """ TODO """
-    return False
+    pass
 
+def require_ip():
+    """ TODO """
+    pass
+    
 
 def disconnect():
     """ TODO """
-    return False
+    pass
+
+if __name__ == '__main__':
+    pass
+            

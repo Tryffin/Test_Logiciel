@@ -1,11 +1,17 @@
 """ bdd.py
 """
 import sqlite3
-import os
-from Crypto import Random  #pip3 install pycryptodome
+##import os
+##from time import daylight
+import logging
+import re
+##from Crypto import Random  #pip3 install pycryptodome
 from Crypto.PublicKey import RSA
-import rsa
+##import rsa
 
+
+IP = '127.0.0.1'
+PORT = 90
 
 # for db itself
 def create_db(db_path):
@@ -34,24 +40,41 @@ def delete_db(db_path):
 
 
 # for operations of server
-def add_user(db_path, name, password, ip, port):
+def add_user(db_path, name, password, ip = IP, port = PORT):
     """ TODO """
-    connect = sqlite3.connect(db_path)
-    cursor = connect.cursor()
-    keypair = RSA.generate(1024)
-    pubkey = keypair.publickey()
-    private_key_start_comment = '-----BEGIN RSA PRIVATE KEY-----'
-    private_key_end_comment = '-----END RSA PRIVATE KEY-----'
-    public_key_start_comment = '-----BEGIN PUBLIC KEY-----'
-    public_key_end_comment = '-----END PUBLIC KEY-----'
-    public_key_pem = pubkey.exportKey(format='PEM', passphrase=None, pkcs=1)
-    public_key_final = str(public_key_pem.decode('ascii')).replace('\n','').replace(public_key_start_comment,'').replace(public_key_end_comment,'').replace(' ','')
-    private_key_pem = keypair.exportKey(format='PEM', passphrase=None, pkcs=1)
-    private_key_final = str(private_key_pem.decode('ascii')).replace('\n','').replace(private_key_start_comment,'').replace(private_key_end_comment,'').replace(' ','')
-    sql = 'INSERT INTO User (name, password, ip, port, public_key, private_key) VALUES (?,?,?,?,?,?)'
-    # cursor.execute(sql,(name, password, ip, port, str(rsa.publickey()), str(rsa)))
-    cursor.execute(sql,(name, password, ip, port, public_key_final, private_key_final))
-    connect.commit()
+    re = True
+    if user_existed(db_path, name):
+        logging.warning("user already existed")
+        re = False
+    elif not verify_name(name):
+        logging.warning("user name wrong format")
+        re = False
+    elif not verify_password(password):
+        logging.warning("user password wrong format")
+        re = False
+    else:
+        connect = sqlite3.connect(db_path)
+        cursor = connect.cursor()
+        keypair = RSA.generate(1024)
+        pubkey = keypair.publickey()
+        private_key_start_comment = '-----BEGIN RSA PRIVATE KEY-----'
+        private_key_end_comment = '-----END RSA PRIVATE KEY-----'
+        public_key_start_comment = '-----BEGIN PUBLIC KEY-----'
+        public_key_end_comment = '-----END PUBLIC KEY-----'
+        public_key_pem = pubkey.exportKey(format='PEM', passphrase=None, pkcs=1)
+        public_key_final = str(public_key_pem.decode('ascii')).replace('\n','') \
+            .replace(public_key_start_comment,'').replace(public_key_end_comment,'').replace(' ','')
+        private_key_pem = keypair.exportKey(format='PEM', passphrase=None, pkcs=1)
+        private_key_final = str(private_key_pem.decode('ascii')).replace('\n','') \
+            .replace(private_key_start_comment,'').replace(private_key_end_comment,'') \
+            .replace(' ','')
+        sql = 'INSERT INTO User (name, password, ip, port, public_key, private_key) \
+            VALUES (?,?,?,?,?,?)'
+        # cursor.execute(sql,(name, password, ip, port, str(rsa.publickey()), str(rsa)))
+        cursor.execute(sql,(name, hash(password), ip, port, public_key_final, private_key_final))
+        connect.commit()
+
+    return re
 
 def delete_user(db_path, name):
     """ TODO """
@@ -68,7 +91,11 @@ def get_user_ip(db_path, name):
     sql = 'SELECT ip FROM User WHERE name=?'
     ip = cursor.execute(sql,(name,)).fetchall()
     connect.commit()
-    return ip
+    if len(ip):
+        return ip
+    else:
+        logging.warning("get_user_ip: user doesn't exist")
+        return False
 
 def get_user_port(db_path, name):
     """ TODO """
@@ -86,7 +113,7 @@ def get_public_key(db_path, name):
     sql = 'SELECT public_key FROM User WHERE name=?'
     public_key = cursor.execute(sql,(name,)).fetchall()
     connect.commit()
-    
+
     return public_key
 
 def store_dest_public_key(db_path, name, public_key_dest):
@@ -98,18 +125,55 @@ def store_dest_public_key(db_path, name, public_key_dest):
     connect.commit()
     return True
 
-# db_path = 'logiciel.db'
-# delete_db(db_path)
-# create_db(db_path)
-# add_user(db_path, 'David','passw', '127.0.0.1', '90')
-# add_user(db_path, 'Elan','passw', '127.0.0.1', '90')
-# print(get_public_key(db_path, 'David')[0][0])
-# print(get_public_key(db_path, 'Elan')[0][0])
+def user_existed(db_path, name):
+    """ TODO """
+    connect = sqlite3.connect(db_path)
+    cursor = connect.cursor()
+    sql = 'SELECT * FROM User WHERE name=?'
+    data = cursor.execute(sql, (name, )).fetchall()
+    connect.commit()
+    if len(data):
+        return True
+    return False
 
-# store_dest_public_key(db_path,'David', get_public_key(db_path, 'Elan'))
-# connect = sqlite3.connect(db_path)
-# cursor = connect.cursor()
-# cursor.execute ('SELECT public_key_dest FROM User WHERE name = "David";')
-# #cursor.execute ('SELECT port FROM User WHERE name = "{}";'.format('David'))
-# print(cursor.fetchall()[0][0])
-# #print(cursor.fetchall())
+def has_special_char(str):
+    """ TODO """
+    char_special = "~!@#$%^&*()_+-*/<>,.[]/"
+
+    for i in char_special:
+        if i in str:
+            return True
+
+    return False
+
+def verify_name(name):
+    """TODO"""
+    if re.search(r'\d', name) :
+        logging.warning("username should not contain number")
+        return False
+
+    if has_special_char(name) :
+        logging.warning("username should not contain special letter")
+        return False
+
+    return True
+
+def verify_password(user_pw):
+    """ TODO"""
+    if len(user_pw) < 8 :
+        print("password lenth should > 8")
+        return False
+
+    if not any(x.isupper() for x in user_pw) :
+        print("password should contain at least one upper letter")
+        return False
+
+    if not has_special_char(user_pw) :
+        print("password should contain at least one special letter")
+        return False
+
+    if not re.search(r'\d', user_pw) :
+        print("password should contain at least one number")
+        return False
+
+    return True

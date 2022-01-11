@@ -1,46 +1,37 @@
-from flask import Flask, request, jsonify
-from flask import Flask
+from flask import Flask, request, jsonify, Response
 import json
+import sqlite3
+import bdd
 
 app = Flask(__name__)
+db_path = 'logiciel.db'
+IP = '127.0.0.1'
+PORT = '90'
 
 @app.route('/message', methods=['post'])
-def post_http():
-    if not request.data:
-        return ('fail')
-    params = request.data.decode('utf-8')
-    prams = json.loads(params)
-    print(prams)
-    return prams
+def handle_message():
+    """ TODO """
+    pass
 
+@app.route('/add_user', methods=['post'])
+def addUser():
+    """ TODO """
+    pass
+
+
+@app.route('/ip', methods=['GET'])
+def get_ip():
+    """ TODO """
+    pass
+
+@app.route('/isconnected', methods=['GET'])
 def connexion():
     """ TODO """
-    return False
+    pass
 
 def message():
     """ TODO """
-    return False
-
-# def add_room():
-#     """ TODO """
-#     return False
-
-def add_user():
-    """ TODO """
-    return False
-
-def handle_message():
-    """ TODO """
-    return False
-
-def join():
-    """ user join a room """
-    return False
-
-def quit():
-    """ user quit a room """
-    return False
-
+    pass
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=80)
+    pass
