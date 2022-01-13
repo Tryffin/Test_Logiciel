@@ -15,7 +15,15 @@ from docopt import docopt
 
 def send_message():
     """ TODO """
-    pass
+    SUBURL = "/message"
+    URL = "http://" + SRVADR + ":" + PORT + SUBURL
+    data = mesg
+    r = requests.post(URL, data=json.dumps(data))
+    if r.status_code == 500:
+        print("Can't send this message")
+    else:
+        print("Your message: "+mesg +" is sent")
+        return r
 
 def add_user():
     """ TODO """
