@@ -49,7 +49,8 @@ def get_ip():
 @app.route('/isconnected', methods=['GET'])
 def connexion():
     """ TODO """
-    pass
+    print("Client is connected")
+    return Response(status=200)
 
 def message():
     """ TODO """
