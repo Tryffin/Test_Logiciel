@@ -11,7 +11,13 @@ PORT = '90'
 @app.route('/message', methods=['post'])
 def handle_message():
     """ TODO """
-    pass
+    if not request.data:
+        return ('fail')
+    params = request.data.decode('utf-8')
+    prams = json.loads(params)
+    print(prams)
+    return prams
+
 
 @app.route('/add_user', methods=['post'])
 def addUser():
