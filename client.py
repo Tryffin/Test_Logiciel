@@ -25,9 +25,19 @@ def send_message():
         print("Your message: "+mesg +" is sent")
         return r
 
-def add_user():
+def add_user(name, password):
     """ TODO """
-    pass
+    SUBURL = "/add_user"
+    URL = "http://" + SRVADR + ":" + PORT + SUBURL
+    data = name + ' '+ password
+    if(bdd.verify_name(name)== False or bdd.verify_password(password)== False):
+        return logging.warning("Wrong format of username or password")
+    r = requests.post(URL, data=json.dumps(data))
+    if r.status_code == 500:
+        print("Can't add this person in the database")
+    else:
+        print(name + " is added")
+        return r
 
 def require_ip():
     """ TODO """
