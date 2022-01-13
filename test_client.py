@@ -4,6 +4,7 @@ import subprocess
 import time
 import os
 import warnings 
+import bdd
 
 class TestClient(unittest.TestCase):
     SrvSubprocess = None
@@ -14,6 +15,8 @@ class TestClient(unittest.TestCase):
 
     def setUp(self):
         warnings.simplefilter('ignore', ResourceWarning)
+        bdd.delete_db('logiciel.db')
+        bdd.create_db('logiciel.db')
         cmd = "python server.py"	
         args = shlex.split(cmd)
         self.SrvSubprocess  = subprocess.Popen(args) # launch command as a subprocess

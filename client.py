@@ -12,6 +12,8 @@ import requests, json
 import bdd
 import logging
 from docopt import docopt
+PORT = "90"
+SRVADR = "127.0.0.1"
 
 def send_message(mesg):
     """ TODO """
@@ -49,6 +51,7 @@ def require_ip(name):
         print("Can't find this person in the database")
     else:
         return print(name+"'s IP is: "+r.text)
+
 
 if __name__ == '__main__':
     ARGS = docopt(__doc__, version="Client v1.0")
