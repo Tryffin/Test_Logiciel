@@ -16,6 +16,8 @@ class TestServer(unittest.TestCase):
 	SrvUrl = "http://" + SrvAddr + ":" + TestPort
 
 	def setUp(self):
+		bdd.delete_db('logiciel.db')
+		bdd.create_db('logiciel.db')
 		cmd = "python server.py"	
 		args = shlex.split(cmd)
 		self.SrvSubprocess  = subprocess.Popen(args) # launch command as a subprocess
