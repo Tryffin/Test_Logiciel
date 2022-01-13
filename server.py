@@ -22,7 +22,22 @@ def handle_message():
 @app.route('/add_user', methods=['post'])
 def addUser():
     """ TODO """
-    pass
+    if not request.data:
+        return ('fail')
+    params = request.data.decode('utf-8')
+    prams = json.loads(params)
+    x = prams.split()
+    name = x[0]
+    password = x[1]
+    print(name)
+    print(password)
+    if bdd.verify_name(name) == True and bdd.verify_password(password) == True:
+        bdd.add_user(db_path, name, password, IP, PORT)
+        print("User added") 
+        return params
+    else:
+        print("Wrong format of username or password")     
+        return params
 
 
 @app.route('/ip', methods=['GET'])
