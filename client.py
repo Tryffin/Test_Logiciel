@@ -51,4 +51,13 @@ def require_ip(name):
         return print(name+"'s IP is: "+r.text)
 
 if __name__ == '__main__':
-    pass
+    ARGS = docopt(__doc__, version="Client v1.0")
+    #print(ARGS)
+    if ARGS.get('adduser') == True:
+        add_user(name=ARGS.get('<name>'), password= ARGS.get('<password>'))
+
+    elif ARGS.get('send') == True:
+        send_message(mesg=ARGS.get('<message>'))
+
+    elif ARGS.get('getip') == True:
+        require_ip(name=ARGS.get('<name>'))
