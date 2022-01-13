@@ -50,9 +50,5 @@ def require_ip(name):
     else:
         return print(name+"'s IP is: "+r.text)
 
-def disconnect():
-    """ TODO """
-    pass
-
 if __name__ == '__main__':
     pass
