@@ -57,4 +57,6 @@ def message():
     pass
 
 if __name__ == '__main__':
-    pass
+    bdd.delete_db(db_path)
+    bdd.create_db(db_path)
+    app.run(host=IP, port=PORT)
