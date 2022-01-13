@@ -43,7 +43,8 @@ def addUser():
 @app.route('/ip', methods=['GET'])
 def get_ip():
     """ TODO """
-    pass
+    name = request.args.get("name")
+    return bdd.get_user_ip(db_path, name)[0][0]
 
 @app.route('/isconnected', methods=['GET'])
 def connexion():
