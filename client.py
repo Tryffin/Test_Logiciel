@@ -13,7 +13,7 @@ import bdd
 import logging
 from docopt import docopt
 
-def send_message():
+def send_message(mesg):
     """ TODO """
     SUBURL = "/message"
     URL = "http://" + SRVADR + ":" + PORT + SUBURL
@@ -39,9 +39,16 @@ def add_user(name, password):
         print(name + " is added")
         return r
 
-def require_ip():
+def require_ip(name):
     """ TODO """
-    pass
+    SUBURL = "/ip"
+    FUNC = '?name=' + name
+    URL = "http://" + SRVADR + ":" + PORT + SUBURL + FUNC
+    r =  requests.get(URL)
+    if r.status_code == 500:
+        print("Can't find this person in the database")
+    else:
+        return print(name+"'s IP is: "+r.text)
 
 def disconnect():
     """ TODO """
