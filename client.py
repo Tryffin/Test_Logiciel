@@ -94,6 +94,15 @@ class inputdata(threading.Thread):
             dataObj = {'to':sendto,'msg':msg,'froms':userName}
             datastr = json.dumps(dataObj)
             tcpCliSock.send(datastr.encode('utf-8'))
+            
+class getdata(threading.Thread):
+    def run(self):
+        while True:
+            data = tcpCliSock.recv(BUFSIZ)
+            dataObj = json.loads(data.decode('utf-8'))
+            print('{} -> {}'.format(dataObj['froms'],dataObj['msg']))
+            
+
 
 if __name__ == '__main__':
     ARGS = docopt(__doc__, version="Client v1.0")
