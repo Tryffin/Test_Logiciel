@@ -1,14 +1,9 @@
 """ bdd.py
 """
 import sqlite3
-##import os
-##from time import daylight
 import logging
 import re
-##from Crypto import Random  #pip3 install pycryptodome
 from Crypto.PublicKey import RSA
-##import rsa
-
 
 IP = '127.0.0.1'
 PORT = 90
@@ -161,19 +156,19 @@ def verify_name(name):
 def verify_password(user_pw):
     """ TODO"""
     if len(user_pw) < 8 :
-        print("password lenth should > 8")
+        logging.warning("password lenth should > 8")
         return False
 
     if not any(x.isupper() for x in user_pw) :
-        print("password should contain at least one upper letter")
+        logging.warning("password should contain at least one upper letter")
         return False
 
     if not has_special_char(user_pw) :
-        print("password should contain at least one special letter")
+        logging.warning("password should contain at least one special letter")
         return False
 
     if not re.search(r'\d', user_pw) :
-        print("password should contain at least one number")
+        logging.warning("password should contain at least one number")
         return False
 
     return True
