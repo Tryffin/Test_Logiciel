@@ -103,6 +103,11 @@ class TestBDD(unittest.TestCase):
         # print(pub_key2[0][0])
         self.assertEqual(pub_key, pub_key2[0][0])
 
-
+    def test_07_log_in(self):
+        """test of log_in"""
+        self.assertEqual(bdd.log_in(self.db_path, 'Celine','pw'), False)
+        self.assertEqual(bdd.log_in(self.db_path, 'Cecile','pw'), False)
+        self.assertEqual(bdd.log_in(self.db_path, 'Cecile','Password123!@#'), True)
+        
 if __name__ == '__main__':
     unittest.main()
