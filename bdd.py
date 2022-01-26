@@ -172,3 +172,26 @@ def verify_password(user_pw):
         return False
 
     return True
+
+def log_in(db_path, name, pw):
+    """ TODO """
+    connect = sqlite3.connect(db_path)
+    cursor = connect.cursor()
+
+    #verifier le nom existe 
+    cursor.execute("SELECT name FROM User WHERE name = ?", (name,))
+    data=cursor.fetchall()
+    if len(data)==0:
+        print('There is no user named %s'%name)    
+        return False
+
+    #verifier les mots de passe corresponds a le nom 
+    cursor.execute("SELECT password FROM User WHERE name = ?", (name,))
+    data=cursor.fetchone()
+    _pw = hash(pw)
+    if str(data[0]) != str(_pw):
+        print('password invalid')    
+        return False
+    else :
+        print("log in successfully")
+        return True
