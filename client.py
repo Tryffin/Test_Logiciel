@@ -4,17 +4,22 @@ Usage:
  client.py send message <message>
  client.py getip name <name>
  client.py chat name <name> password <password>
+ 
 Options:
  -h --help     Show this screen.
  -v --version    Show version.
 """
+from asyncio.windows_events import NULL
+from operator import truediv
 import requests, json
 import bdd
 import logging
 from docopt import docopt
+from socket import *
+import threading,sys,json,re
+
 PORT = "90"
 SRVADR = "127.0.0.1"
-
 db_path = 'logiciel.db'
 global userName
 global tcpCliSock
@@ -80,6 +85,15 @@ def verify(name, password):
         global userName
         userName = name
         return (name, password)
+    
+class inputdata(threading.Thread):
+    def run(self):
+        while True:
+            sendto = input('to>>:')
+            msg = input('msg>>:')
+            dataObj = {'to':sendto,'msg':msg,'froms':userName}
+            datastr = json.dumps(dataObj)
+            tcpCliSock.send(datastr.encode('utf-8'))
 
 if __name__ == '__main__':
     ARGS = docopt(__doc__, version="Client v1.0")
