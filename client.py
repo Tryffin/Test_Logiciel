@@ -3,7 +3,7 @@ Usage:
  client.py adduser name <name> password <password>
  client.py send message <message>
  client.py getip name <name>
- 
+ client.py chat name <name> password <password>
 Options:
  -h --help     Show this screen.
  -v --version    Show version.
