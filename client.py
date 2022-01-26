@@ -140,3 +140,6 @@ if __name__ == '__main__':
 
     elif ARGS.get('getip') == True:
         require_ip(name=ARGS.get('<name>'))
+
+    elif ARGS.get('chat') == True:
+        chat(name=ARGS.get('<name>'), password=ARGS.get('<password>'))
