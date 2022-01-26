@@ -61,6 +61,17 @@ def require_ip(name):
     else:
         return print(name+"'s IP is: "+r.text)
 
+def log_in(name, password):
+    SUBURL = "/log_in"
+    URL = "http://" + SRVADR + ":" + PORT + SUBURL
+    data = name + ' '+ password
+    r = requests.post(URL, data=json.dumps(data))
+    if r.status_code == 500:
+        print("Can't find this person in the database")
+        return False
+    else:
+        print("log in successfully")
+        return True
 
 if __name__ == '__main__':
     ARGS = docopt(__doc__, version="Client v1.0")
