@@ -15,6 +15,15 @@ from docopt import docopt
 PORT = "90"
 SRVADR = "127.0.0.1"
 
+db_path = 'logiciel.db'
+global userName
+global tcpCliSock
+
+HOST = '127.0.0.1' 
+PORT1=8021
+BUFSIZ = 1024
+ADDR = (HOST,PORT1)
+
 def send_message(mesg):
     """ TODO """
     SUBURL = "/message"
