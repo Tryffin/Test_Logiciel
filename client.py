@@ -103,6 +103,31 @@ class getdata(threading.Thread):
             print('{} -> {}'.format(dataObj['froms'],dataObj['msg']))
             
 
+def chat(name, password):
+    """ TODO """
+
+    while True:
+        if verify(name, password) != False:
+            regInfo =  verify(name, password)
+        else:
+            sys.exit(0)
+            
+        if  regInfo:
+            global tcpCliSock
+            tcpCliSock = socket(AF_INET,SOCK_STREAM)
+            tcpCliSock.connect(ADDR)
+
+            datastr = json.dumps(regInfo)
+            tcpCliSock.send(datastr.encode('utf-8'))
+            break
+
+    myinputd = inputdata()
+    mygetdata = getdata()
+    myinputd.start()
+    mygetdata.start()
+    myinputd.join()
+    mygetdata.join()
+
 
 if __name__ == '__main__':
     ARGS = docopt(__doc__, version="Client v1.0")
