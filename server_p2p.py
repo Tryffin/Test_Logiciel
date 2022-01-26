@@ -42,3 +42,8 @@ class MyServer(socketserver.BaseRequestHandler):
             else:
                 conn.sendall('nobody recevied!'.encode('utf-8'))
                 continue
+
+if __name__ == '__main__':
+    server = socketserver.ThreadingTCPServer(('127.0.0.1',8021),MyServer)
+    print('waiting for connection...')
+    server.serve_forever()
