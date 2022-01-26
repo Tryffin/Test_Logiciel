@@ -8,6 +8,22 @@ db_path = 'logiciel.db'
 IP = '127.0.0.1'
 PORT = '90'
 
+@app.route('/log_in', methods=['post', 'get'])
+def log_in_server():
+    """ TODO """
+    if not request.data:
+        return ('fail')
+    params = request.data.decode('utf-8')
+    prams = json.loads(params)
+    x = prams.split()
+    name = x[0]
+    password = x[1]
+
+    if bdd.log_in(db_path, name, password):
+        return Response(status=200)
+    else:
+        return Response(status=500)
+
 @app.route('/message', methods=['post'])
 def handle_message():
     """ TODO """
