@@ -62,14 +62,11 @@ class TestBDD(unittest.TestCase):
         self.assertEqual(bdd.add_user(self.db_path,'Alex', 'pass', '127.0.0.1', '90'), False)
         self.assertEqual(bdd.add_user(self.db_path,'Cecile2', 'password', '127.0.0.1', '90'), False)
 
-
-
     # def test_delete_user(self):
     #     bdd.delete_user(self.db_path, 'Cecile')
     #     sql = "SELECT name FROM User WHERE name = 'Cecile';"
     #     data = self.cursor.execute(sql).fetchall()
     #     self.assertIsNone(data)
-
 
     def test_03_get_user_ip(self):
         """test of get_user_ip"""
