@@ -73,6 +73,14 @@ def log_in(name, password):
         print("log in successfully")
         return True
 
+def verify(name, password):
+    if not log_in(name, password):
+        return False
+    else:
+        global userName
+        userName = name
+        return (name, password)
+
 if __name__ == '__main__':
     ARGS = docopt(__doc__, version="Client v1.0")
     #print(ARGS)
