@@ -3,13 +3,14 @@ Usage:
  client.py adduser name <name> password <password>
  client.py send message <message>
  client.py getip name <name>
- client.py chat name <name> password <password>
+ client.py chat dname <dname> name <name> password <password>
  
 Options:
  -h --help     Show this screen.
  -v --version    Show version.
 """
 from asyncio.windows_events import NULL
+from calendar import day_name
 from operator import truediv
 import requests, json
 import bdd
@@ -23,6 +24,7 @@ SRVADR = "127.0.0.1"
 db_path = 'logiciel.db'
 global userName
 global tcpCliSock
+global dname
 
 HOST = '127.0.0.1' 
 PORT1=8021
@@ -72,7 +74,7 @@ def log_in(name, password):
     data = name + ' '+ password
     r = requests.post(URL, data=json.dumps(data))
     if r.status_code == 500:
-        print("Can't find this person in the database")
+        print("Can't find this person in the database or password invalid")
         return False
     else:
         print("log in successfully")
@@ -88,10 +90,12 @@ def verify(name, password):
     
 class inputdata(threading.Thread):
     def run(self):
+        # global dname
+        print("Welcome to " + dname + " and " + userName + " 's chat room!")
         while True:
-            sendto = input('to>>:')
+            # sendto = input('to>>:')
             msg = input('msg>>:')
-            dataObj = {'to':sendto,'msg':msg,'froms':userName}
+            dataObj = {'to':dname,'msg':msg,'froms':userName}
             datastr = json.dumps(dataObj)
             tcpCliSock.send(datastr.encode('utf-8'))
             
@@ -100,7 +104,7 @@ class getdata(threading.Thread):
         while True:
             data = tcpCliSock.recv(BUFSIZ)
             dataObj = json.loads(data.decode('utf-8'))
-            print('{} -> {}'.format(dataObj['froms'],dataObj['msg']))
+            print('\n{} -> {}'.format(dataObj['froms'],dataObj['msg']))
             
 
 def chat(name, password):
@@ -131,6 +135,7 @@ def chat(name, password):
 
 if __name__ == '__main__':
     ARGS = docopt(__doc__, version="Client v1.0")
+
     #print(ARGS)
     if ARGS.get('adduser') == True:
         add_user(name=ARGS.get('<name>'), password= ARGS.get('<password>'))
@@ -142,4 +147,6 @@ if __name__ == '__main__':
         require_ip(name=ARGS.get('<name>'))
 
     elif ARGS.get('chat') == True:
+ 
+        dname=ARGS.get('<dname>')
         chat(name=ARGS.get('<name>'), password=ARGS.get('<password>'))
