@@ -4,6 +4,7 @@ Usage:
  client.py send message <message>
  client.py getip name <name>
  client.py chat dname <dname> name <name> password <password>
+ client.py sendkey from <name1> to <name2> 
  
 Options:
  -h --help     Show this screen.
@@ -12,12 +13,13 @@ Options:
 from asyncio.windows_events import NULL
 from calendar import day_name
 from operator import truediv
-import requests, json
-import bdd
-import logging
-from docopt import docopt
 from socket import *
 import threading,sys,json,re
+import requests, json
+from docopt import docopt
+import bdd
+import logging
+
 
 PORT = "90"
 SRVADR = "127.0.0.1"
@@ -25,6 +27,8 @@ db_path = 'logiciel.db'
 global userName
 global tcpCliSock
 global dname
+global myinputd
+global mygetdata
 
 HOST = '127.0.0.1' 
 PORT1=8021
@@ -48,8 +52,8 @@ def add_user(name, password):
     SUBURL = "/add_user"
     URL = "http://" + SRVADR + ":" + PORT + SUBURL
     data = name + ' '+ password
-    if(bdd.verify_name(name)== False or bdd.verify_password(password)== False):
-        return logging.warning("Wrong format of username or password")
+    # if(bdd.verify_name(name)== False or bdd.verify_password(password)== False):
+    #     return logging.warning("Wrong format of username or password")
     r = requests.post(URL, data=json.dumps(data))
     if r.status_code == 500:
         print("Can't add this person in the database")
@@ -91,10 +95,15 @@ def verify(name, password):
 class inputdata(threading.Thread):
     def run(self):
         # global dname
-        print("Welcome to " + dname + " and " + userName + " 's chat room!")
+        print("Welcome to " + dname + " and " + userName + "'s chat room!")
         while True:
             # sendto = input('to>>:')
             msg = input('msg>>:')
+            if msg == "exit":
+                myinputd._delete()
+                break
+            elif msg == "":
+                continue
             dataObj = {'to':dname,'msg':msg,'froms':userName}
             datastr = json.dumps(dataObj)
             tcpCliSock.send(datastr.encode('utf-8'))
@@ -104,7 +113,7 @@ class getdata(threading.Thread):
         while True:
             data = tcpCliSock.recv(BUFSIZ)
             dataObj = json.loads(data.decode('utf-8'))
-            print('\n{} -> {}'.format(dataObj['froms'],dataObj['msg']))
+            print('{} -> {}'.format(dataObj['froms'],dataObj['msg']))
             
 
 def chat(name, password):
@@ -125,6 +134,8 @@ def chat(name, password):
             tcpCliSock.send(datastr.encode('utf-8'))
             break
 
+    global mygetdata
+    global myinputd
     myinputd = inputdata()
     mygetdata = getdata()
     myinputd.start()
@@ -133,20 +144,37 @@ def chat(name, password):
     mygetdata.join()
 
 
+def sendkey(name1, name2):
+    """ TODO """
+    SUBURL = "/get_store_key"
+    URL = "http://" + SRVADR + ":" + PORT + SUBURL
+    data = str(name1) + ' '+ str(name2)
+    r = requests.post(URL, data=json.dumps(data))
+
+    if r.status_code == 500:
+        print("Can't store this person's key")
+        return False
+    else:
+        print("key is added")
+        return True
+
+
 if __name__ == '__main__':
     ARGS = docopt(__doc__, version="Client v1.0")
 
     #print(ARGS)
-    if ARGS.get('adduser') == True:
+    if ARGS.get('adduser'):
         add_user(name=ARGS.get('<name>'), password= ARGS.get('<password>'))
 
-    elif ARGS.get('send') == True:
+    elif ARGS.get('send'):
         send_message(mesg=ARGS.get('<message>'))
 
-    elif ARGS.get('getip') == True:
+    elif ARGS.get('getip'):
         require_ip(name=ARGS.get('<name>'))
 
-    elif ARGS.get('chat') == True:
- 
+    elif ARGS.get('chat'):
         dname=ARGS.get('<dname>')
         chat(name=ARGS.get('<name>'), password=ARGS.get('<password>'))
+    
+    elif ARGS.get('sendkey'):
+        sendkey(name1=ARGS.get('<from>'), name2=ARGS.get('<to>'))
