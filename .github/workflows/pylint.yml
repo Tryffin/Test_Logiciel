@@ -1,4 +1,4 @@
-name: Pylint (Analyse syntaxique)
+name: Pylint
 
 on:
   push:
